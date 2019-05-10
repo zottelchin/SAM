@@ -16,11 +16,12 @@ import (
 //// Gin Handler
 
 func register(c *gin.Context) {
+	log.Info("Ein neuer Nutzer möchte sich registrieren")
 	u := Register{}
 	c.BindJSON(&u)
-	log.Info("Nutzer: %v ", u)
 	if Config.Key_required && u.Key != Config.Register_Key {
-		c.Status(401)
+		log.Info("Es wird ein Registrierungsschlüssel benötigt, aber der mitgesendete stimmt nicht mit unserem überein")
+		c.Status(403)
 		c.Abort()
 		return
 	}
@@ -39,10 +40,7 @@ func register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200,
-		gin.H{
-			"hash": addHash(v),
-		})
+	c.Status(200)
 	return
 
 }
@@ -78,13 +76,6 @@ func logout(c *gin.Context) {
 }
 
 //// Helperfunctions
-func isLoggedIn(c *gin.Context) bool {
-	hash := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
-	if hash != "" && hashes[hash] != 0 {
-		return true
-	}
-	return false
-}
 
 func isMailInUse(mail string) bool {
 	var c int
@@ -131,6 +122,7 @@ func hashPassword(pw string) string {
 var hashes = map[string]int{"abc": 4}
 
 func addHash(u Nutzer) string {
+	log.Info("Füge neuen Hash für %s hinzu", u.Name)
 	for {
 		newHash := randomString(55)
 		if hashes[newHash] == 0 {
@@ -142,6 +134,7 @@ func addHash(u Nutzer) string {
 
 func removeHash(c *gin.Context) {
 	hash := c.GetHeader("Authorization")
+	log.Info("Lösche Hash %s für %s", hash, userByHash(c))
 	hash = strings.TrimPrefix(hash, "Bearer ")
 	delete(hashes, hash)
 }
@@ -153,4 +146,16 @@ func userByHash(c *gin.Context) Nutzer {
 	u := Nutzer{}
 	db.First(&u, id)
 	return u
+}
+
+func isLoggedIn(c *gin.Context) bool {
+	log.Info("Teste ob Nutzer eingelogged ist")
+	hash := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
+	log.Info("Hash ist: %s", hash)
+	if hash != "" && hashes[hash] != 0 {
+		log.Info("Nutzer ist angemeldet")
+		return true
+	}
+	log.Info("Nutzer ist nicht angemeldet")
+	return false
 }
