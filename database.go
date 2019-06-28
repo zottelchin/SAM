@@ -98,7 +98,7 @@ func removeNutzerReise(n Nutzer, r Reise) error {}
 func createBeleg(b Beleg, r Reise) (Reise, error) {}
 
 // ändert einen bestehenden Beleg
-func updateBeleg(b Beleg) (Beleg, error) {}
+func updateBeleg(b Beleg) (Reise, error) {}
 
 // setzt das Archivierungsbit für einen Beleg, sodass dieser nicht mehr angezeigt wird
-func archivBeleg(b Beleg) (Beleg, error) {}
+func archivBeleg(b Beleg) (Reise, error) {}
