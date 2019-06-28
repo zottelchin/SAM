@@ -76,6 +76,9 @@ func getNutzersReisen(n Nutzer) ([]Reise, error) {}
 // createReise erstellt eine neue Reise mit den gegegebenen Angaben
 func createReise(r Reise) (Reise, error) {}
 
+// gibt die Reise mit der ID zurück
+func getReise(id int) (Reise, error) {}
+
 // istDabei gibt WAHR zurück, wenn jemand bei einer Reise dabei ist
 func istDabei(n Nutzer, r Reise) bool {}
 
