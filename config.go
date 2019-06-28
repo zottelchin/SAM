@@ -9,7 +9,7 @@ import (
 )
 
 func loadConfig() {
-	if err := configor.Load(&Config, "./config.yml"); err != nil {
+	if err := configor.Load(&Config, "./data/config.yml"); err != nil {
 		logg.Error("Laden der Konfigurationsdatei ist fehlgeschlagen %s", err)
 	}
 	result := ""

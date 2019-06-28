@@ -1,0 +1,8 @@
+node_modules
+rethinkdb_data
+.cache
+frontend/.cache
+dist
+frontend/dist
+.vscode
+data/storage.db
