@@ -1,0 +1,120 @@
+<template>
+  <div>
+      <router-link class="button" :to="'/reisen/'+encodeURIComponent($route.params.id)">
+        <span class="icon"><i class="remixicon-reply-line"></i></span>
+        <span>zurück</span>
+      </router-link>
+      <div class="field">
+    <h1 class="title has-text-centered">Neue Ausgabe anlegen</h1>
+    </div>
+
+    <div class="field is-horizontal">
+      <div class="field-label is-normal">
+        <label class="label">Betreff:</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input class="input" type="text" placeholder="Betreff" v-model="b.name">
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="field is-horizontal">
+        <div class="field-label is-normal">
+            <label class="label">Bezahlt von:</label>
+        </div>
+        <div class="field-body">
+            <div class="field">
+                <p class="control is-expanded">
+                    <div class="select is-fullwidth">
+                    <select v-model="b.by">
+                        <option v-for="reisender in mitreisende" :key="reisender.mail" :value="reisender.mail">{{reisender.name}}</option>
+                    </select>
+                    </div>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="field is-horizontal">
+        <div class="field-label is-normal">
+            <label class="label">Bezahlt für:</label>
+        </div>
+        <div class="field-body">
+            <div class="field">
+                <div class="control" v-for="reisender in mitreisende" :key="reisender.mail">
+                    <label class="checkbox">
+                        <input type="checkbox" :value="reisender.mail" v-model="b.for">
+                        {{reisender.name}}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="field is-horizontal">
+      <div class="field-label is-normal">
+        <label class="label">Betrag:</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input class="input" type="number" placeholder="Betrag" v-model.number="b.v">
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="field is-horizontal">
+      <div class="field-label is-normal">
+        <label class="label">Datum:</label>
+      </div>
+    <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input class="input" type="date" v-model="b.time">
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <button class="button is-pulled-right" @click="save()">Speichern</button>
+    </div>
+
+  </div>
+</template>
+
+<script>
+export default {
+    data(){
+        setTimeout(() => this.load());
+        return { 
+            b: {
+                for:[],
+            }, mitreisende: {} }
+        },
+    methods: {
+        async load() {
+            let r = await api.GET("/reisen/"+ encodeURIComponent(this.$route.params.id));
+            if (r.ok && r.content) this.mitreisende = r.content.mitreisende;
+        },
+        async save() {
+            //TODO: Error Handeling
+            let r = await api.PUT("reisen/" + encodeURIComponent(this.$route.params.id) + "/beleg", {
+                "name": this.b.name,
+                "datum": this.b.time,
+                "betrag": this.b.v,
+                "von": {"mail": this.b.by},
+                "an": this.b.for.map(x => {return {"mail": x};})
+            });
+            console.log(r);
+            if (r.ok) this.$router.push("/reisen/" + encodeURIComponent(this.$route.params.id));
+        }
+    }
+}
+</script>
+
+
