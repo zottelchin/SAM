@@ -6,3 +6,5 @@ dist
 frontend/dist
 .vscode
 data/storage.db
+frontend
+.DS_STORE

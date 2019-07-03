@@ -26,7 +26,8 @@ func register(c *gin.Context) {
 	}
 	u.Password = hashPassword(u.Password)
 	v := Nutzer{Password: u.Password, Name: u.Name, Mail: u.Mail}
-	if _, e := createNutzer(v); e != nil {
+	v, e := createNutzer(v)
+	if e != nil {
 		log.Error("Registrierung fehlgeschlagen: %s", e)
 		c.Status(500)
 		c.Abort()

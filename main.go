@@ -10,13 +10,11 @@ var session *r.Session
 
 func main() {
 	loadConfig()
-	migrate()
 
 	router := gin.Default()
 	router.POST("/api/login", login)
 	router.POST("/api/logout", logout)
 	router.POST("/api/register", register)
-	router.GET("/api/user", listUser)
 
 	router.GET("/api/reisen", meineReisen) //alle reisen
 	router.PUT("/api/reisen", neueReise)   // Reise Anlegen
@@ -30,7 +28,7 @@ func main() {
 	router.PUT("/api/reisen/:id/beleg/:bid", belegBearbeiten)
 	router.DELETE("/api/reisen/:id/beleg/:bid", belegLöschen)
 
-	parcelServe.Serve("frontend2", router, nil, nil)
+	parcelServe.Serve("frontend", router, AssetNames(), MustAsset)
 	router.Run(":2222")
 
 }

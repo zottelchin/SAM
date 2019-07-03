@@ -42,6 +42,13 @@ func neueReise(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	err = addNutzerReise(userByHash(c), r)
+	if err != nil {
+		logg.Error("Fehler beim hinzugügen des erstellers zur Reise: %s", err)
+		c.Status(500)
+		c.Abort()
+		return
+	}
 	c.JSON(200, r)
 }
 
@@ -81,7 +88,7 @@ func reiseNummer(c *gin.Context) {
 	if err != nil {
 		logg.Error("Fehler beim Abrufen der Reise %d: %s", id, err)
 	}
-	c.JSON(200, r)
+	c.JSON(200, reise)
 }
 
 func reisePersonHinzufügen(c *gin.Context) {
