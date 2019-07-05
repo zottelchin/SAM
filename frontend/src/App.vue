@@ -37,6 +37,7 @@ import Gravatar from "vue-gravatar";
 import Übersicht from "./component/reisen.vue";
 import Reise from "./component/reise.vue";
 import Neu from "./component/beleg.vue"
+import Register from "./component/register.vue"
 
 Vue.component("v-gravatar", Gravatar);
 Vue.use(VueRouter);
@@ -48,16 +49,25 @@ const router = new VueRouter({
     { path: "/login", component: Login },
     { path: "/reisen", component: Übersicht },
     { path: "/reisen/:id", component: Reise },
-    { path: "/reisen/:id/neu", component: Neu}
+    { path: "/reisen/:id/neu", component: Neu},
+    { path: "/register", component: Register}
   ]
 });
 
 export default {
   router,
   data() {
+     this.load();
     return {
       reise: {}
     };
+  },
+  methods: {
+    async load() {
+      console.log("Test")
+      let r = await api.GET("/config");
+      window.key = r.content;
+    }
   }
 };
 </script>

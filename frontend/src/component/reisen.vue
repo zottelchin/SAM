@@ -56,7 +56,8 @@ export default {
         async load() {
           let r = await api.GET("/reisen");
           if (r.ok) this.reisen = r.content;
-          console.log("Test")
+          console.log("Test");
+          console.log(process.env.VUE_APP_VERSION2);
         },
         async add() {
           let r = await api.PUT("/reisen", {name: this.name})

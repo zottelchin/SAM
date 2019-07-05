@@ -12,6 +12,8 @@ func main() {
 	loadConfig()
 
 	router := gin.Default()
+	router.GET("/api/config", func(c *gin.Context) { c.JSON(200, Config.Key_required) })
+
 	router.POST("/api/login", login)
 	router.POST("/api/logout", logout)
 	router.POST("/api/register", register)
