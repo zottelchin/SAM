@@ -84,6 +84,7 @@ export default {
       async load() {
           let r = await api.GET("/reisen/"+ encodeURIComponent(this.$route.params.id));
             if (r.ok && r.content) this.reise = r.content;
+            if (r.status == 401) this.$router.push("/login?login=true")
         },
       edit() {
         alert("Bearbeiten ist aktuell noch nicht implementiert.")

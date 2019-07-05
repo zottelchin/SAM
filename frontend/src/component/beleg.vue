@@ -100,6 +100,7 @@ export default {
         async load() {
             let r = await api.GET("/reisen/"+ encodeURIComponent(this.$route.params.id));
             if (r.ok && r.content) this.mitreisende = r.content.mitreisende;
+            if (r.status == 401) this.$router.push("/login?login=true")
         },
         async save() {
             //TODO: Error Handeling
