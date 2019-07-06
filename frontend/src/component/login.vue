@@ -61,11 +61,15 @@ export default {
   },
   methods: {
       async login() {
-          let r = await api.POST("/login", {
-              "mail": this.mail,
-              "password": this.password,
-          });
-          if(r.ok) localStorage.setItem("hash", r.content.hash);
+        let r = await api.POST("/login", {
+            "mail": this.mail,
+            "password": this.pw,
+        });
+        if(r.ok) {
+            localStorage.setItem("hash", r.content.hash); 
+            api.options.headers.Authorization = "Bearer " + r.content.hash; 
+            this.$router.push("/reisen");
+        }
           else this.fehler = r.status;
       }
   }
