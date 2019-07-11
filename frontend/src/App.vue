@@ -1,28 +1,29 @@
 <template>
-  <div class="container">
-    <header>
-      <router-link to="/">
-        <img src="../goldtopf.png" class="image">
-      </router-link>
-        <h1 class="title has-text-centered full">Supertolles Ausgabenmanagement</h1>
-        <h1 class="title has-text-centered small">SAM</h1>
-      <div class="gravatar">
-        <div style="flex: 1;">
-          <v-gravatar email="test@zottelchin.de" alt="Nobody" default-img="retro" :size="35"/>
-        </div>
-      </div>
-    </header>
+<div class="body">
+      <h1>
+        <img src="../goldtopf.png">SAM
+      </h1>
     <router-view id="container"></router-view>
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <p>
+    <footer>
+      <div class="container">
+        <div>
+          <i class="remixicon-information-line"></i>
+          <router-link to="/infos">Informationen</router-link>
+        </div>
+        <div>
+          Logo von&nbsp;<a href="https://icons8.com/icon/35176/goldtopf">Icons8</a>
+        </div>
+        <div>
+          <i>&copy;</i> <a href="http://zottelchin.de">Phillipp</a>
+        </div>
+        <div>
+          <i class="remixicon-github-line"></i>
           <a href="https://github.com/zottelchin/sam">SAM</a>
-          &#9702;
-          Supertolles Ausgabenmanagement von
-          <a
-            href="https://zottelchin.de"
-          >Phillipp Engelke</a>
-        </p>
+        </div>
+        <div>
+          <i class="remixicon-error-warning-line"></i>
+          <a href="https://github.com/zottelchin/sam/issues">SAM</a>
+        </div>
       </div>
     </footer>
   </div>
@@ -33,13 +34,11 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "./component/home.vue";
 import Login from "./component/login.vue";
-import Gravatar from "vue-gravatar";
 import Übersicht from "./component/reisen.vue";
 import Reise from "./component/reise.vue";
 import Neu from "./component/beleg.vue"
 import Register from "./component/register.vue"
 
-Vue.component("v-gravatar", Gravatar);
 Vue.use(VueRouter);
 
 const router = new VueRouter({

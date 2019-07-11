@@ -1,50 +1,49 @@
-.image
-    width: 3rem
-    height: 3rem
-    align-self: center
+img
+    height: 1em 
+    margin-right: 0.3em
 
-.gravatar
-    width: 3rem
-    align-self: center
+h1
+    text-align: center
+    font-size: 3rem
+    margin: 45px 0
     display: flex
-    flex-flow: column
+    justify-content: center
     align-items: center
 
-.title
-    align-self: center
-    flex-grow: 1
-    margin-bottom: 0rem !important
-
-header
-    display: flex
-    flex-direction: row
-    justify-content: center
-    padding-top: 1rem
-    padding-bottom: 1rem
-    margin-bottom: 1rem
-
-.container
-    padding-left: 0.5rem
-    padding-right: 0.5rem
+html, body
+    height: 100% 
+    
+.body
+    height: 100%
     display: flex
     flex-direction: column
 
-html, body, .container
-    height: 100%
+footer 
+    background-color: #efe4d4
+    border-top: 2px solid #b7c25e
+    padding: 0.8rem 0
+    margin-top: 2em
+    .container
+        display: flex
+        justify-content: space-between
+        flex-wrap: wrap
+        div
+            padding: 0 1.5em
+            display: flex
+            i
+                margin-right: 0.2em
 
-#container
-    flex: 1
-
-.small
-    display: none
-
-footer
-    margin-top: 1rem
 @media (max-width: 700px)
-    .full
-        display: none
-    .small
-        display: inline-block
+    footer 
+        .container 
+            div
+                flex-basis: 100%
+
+h2
+    margin-bottom: 0.3em !important
+
+hr 
+    margin: 3em 0
 
 .login
     max-width: 62rem
@@ -54,12 +53,6 @@ footer
 .summe
     background-color: $success
 
-.reisen tr:hover
-            background-color: hsl(179, 81%, 86%)
-            cursor: pointer
-
-.footer
-    background-color: white
 
 .register
     display: flex
@@ -70,3 +63,18 @@ footer
     margin: auto
     h1
         flex-grow: 0
+
+#container
+    flex: 1
+    @media screen and (min-width: 1500px)
+        width: 1300px
+        margin: 0 auto
+    @media screen and (max-width: 1500px)
+        width: 1100px
+        margin: 0 auto
+    @media screen and (max-width: 1150px)
+        width: calc(100% - 10em)
+        margin: 0 5em
+    @media screen and (max-width: 800px)
+        width: calc(100% - 4em)
+        margin: 0 2em

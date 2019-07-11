@@ -18,7 +18,6 @@
         </div>
       </div>
     </div>
-
         <table class="table is-fullwidth">
       <thead>
         <th>Datum</th>

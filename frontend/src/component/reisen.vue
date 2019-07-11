@@ -1,29 +1,15 @@
 <template>
   <div>
-    <div class="level">
-      <div class="level-left">
-        <h1 class="title">Meine Ausgaben</h1>
-      </div>
-      <div class="level-right">
-        <div class="field is-grouped">
-          <p class="control">
-            <input type="text" class="input" v-model="name" placeholder="Name">
-          </p>
-          <p class="control">
-            <button class="button" @click="add()">Erstellen</button>
-          </p>
-        </div>
-      </div>
-    </div>
+    <h2 class="title is-4">Meine Ausgaben</h2>
 
-    <table class="table is-hoverable is-fullwidth reisen">
+    <table class="table is-fullwidth reisen" v-if="reisen.length>0">
       <thead>
         <th>ID</th>
         <th>Name</th>
         <th>Beteiligte</th>
         <th>Status</th>
       </thead>
-      <tr v-for="r in reisen" :key="r.ID" v-if="reisen.length>0" @click="open(r.ID)">
+      <tr v-for="r in reisen" :key="r.ID"  @click="open(r.ID)">
         <td>{{r.ID}}</td>
         <td>{{r.name}}</td>
         <td>
@@ -36,7 +22,26 @@
         </td>
       </tr>
     </table>
-    <span v-if="reisen.length == 0">Du hast noch keine Ausgaben in deiner Liste. Bitte andere Menschen dich einem Projekt hinzuzufügen oder erstelle ein eigenes mit dem Button oben rechts.</span>
+    <small v-if="reisen.length == 0">Du hast noch keine Ausgaben in deiner Liste. Bitte andere Menschen dich einem Projekt hinzuzufügen oder erstelle ein eigenes mit dem Button oben rechts.</small>
+
+    <h2 class="title is-4">Erstelle eine neue Ausgabensammlung</h2>
+    <div class="field is-grouped">
+      <p class="control">
+        <input type="text" class="input" v-model="name" placeholder="Name">
+      </p>
+      <p class="control">
+        <button class="button" @click="add()">Erstellen</button>
+      </p>
+    </div>
+
+    <hr>
+
+    <div>
+      <p><strong>Du bist eingelogged als:&nbsp;</strong> {{name}}</p>
+      <p>Zu deinen Einstellungen:&nbsp; <router-link to="/einstellungen">Einstellungen</router-link></p>
+      <p><a><i class="remixicon-logout-box-line" styl></i>Abmelden</a></p>
+    </div>
+  
   </div>
 </template>
 
@@ -45,7 +50,7 @@ export default {
     data() {
       setTimeout(() => this.load())
         return {
-            reisen: [],
+            reisen: [{"test":"53"}],
             name: ""
         }
     },
