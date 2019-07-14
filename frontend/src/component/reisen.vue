@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="title is-4">Meine Ausgaben</h2>
-
+    
     <table class="table is-fullwidth reisen" v-if="reisen.length>0">
       <thead>
         <th>ID</th>
@@ -37,7 +37,7 @@
     <hr>
 
     <div>
-      <p><strong>Du bist eingelogged als:&nbsp;</strong> {{name}}</p>
+      <p><strong>Du bist eingelogged als:&nbsp;</strong> {{meinName}}</p>
       <p>Zu deinen Einstellungen:&nbsp; <router-link to="/einstellungen">Einstellungen</router-link></p>
       <p><a><i class="remixicon-logout-box-line" styl></i>Abmelden</a></p>
     </div>
@@ -51,7 +51,8 @@ export default {
       setTimeout(() => this.load())
         return {
             reisen: [{"test":"53"}],
-            name: ""
+            name: "",
+            meinName: ""
         }
     },
     methods:{
@@ -60,8 +61,13 @@ export default {
         },
         async load() {
           let r = await api.GET("/reisen");
-          if (r.ok) this.reisen = r.content;
-          if (r.status == 401) this.$router.push("/login?login=true")
+          if (r.ok) {
+            this.reisen = r.content;
+            let b = await api.GET("/me");
+            if (b.ok) this.meinName = b.content.name;
+          }
+          if (r.status == 401) this.$router.push("/")
+
         },
         async add() {
           let r = await api.PUT("/reisen", {name: this.name})

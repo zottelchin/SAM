@@ -59,6 +59,11 @@ func login(c *gin.Context) {
 	c.String(401, "Login fehlgeschlagen. Bitte überprüfen Sie Ihre Logindaten.")
 }
 
+func me(c *gin.Context) {
+	user := userByHash(c)
+	c.JSON(200, user)
+}
+
 func logout(c *gin.Context) {
 	removeHash(c)
 	c.Status(200)

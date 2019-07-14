@@ -17,6 +17,7 @@ func main() {
 	router.POST("/api/login", login)
 	router.POST("/api/logout", logout)
 	router.POST("/api/register", register)
+	router.GET("/api/me", me)
 
 	router.GET("/api/reisen", meineReisen) //alle reisen
 	router.PUT("/api/reisen", neueReise)   // Reise Anlegen
