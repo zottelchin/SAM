@@ -36,6 +36,7 @@ import Home from "./component/home.vue";
 import Übersicht from "./component/reisen.vue";
 import Reise from "./component/reise.vue";
 import Neu from "./component/beleg.vue"
+import Info from "./component/Info.vue"
 
 Vue.use(VueRouter);
 
@@ -46,6 +47,7 @@ const router = new VueRouter({
     { path: "/reisen", component: Übersicht },
     { path: "/reisen/:id", component: Reise },
     { path: "/reisen/:id/neu", component: Neu},
+    { path: "/infos", component: Info}
   ]
 });
 
