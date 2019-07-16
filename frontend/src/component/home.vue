@@ -143,16 +143,19 @@ export default {
     },
     methods: {
         async register() {
+            this.fehlerRechts = "";
             let r = await api.POST("/register", {
                 "mail": this.mail,
                 "name": this.name,
                 "password": this.pw,
                 "key": this.key
             })
-            if (!r.ok) this.fehlerRechts = r.status;
+            if (r.status == 500) this.fehlerRechts = "Die EMail ist schon in der Datenbank";
+            else if (!r.ok) this.fehlerRechts = r.status;
             if (r.ok) await this.login();
         },
         async login() {
+            this.fehlerLinks = "";
             let r = await api.POST("/login", {
                 "mail": this.mail,
                 "password": this.pw,
@@ -162,7 +165,8 @@ export default {
                 api.options.headers.Authorization = "Bearer " + r.content.hash; 
                 this.$router.push("/reisen");
             }
-            else this.fehlerLinks = r.status;
+            else if (r.status == 401) this.fehlerLinks = "Die Zugangsdaten sind nicht korrekt. Bitte überprüfen Sie Ihre Angaben."; 
+            else this.fehlerLinks = r.status + " - " + r.content;
         }
     }
 }
