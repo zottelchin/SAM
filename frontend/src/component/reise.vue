@@ -40,7 +40,7 @@
             </div>
           </td>
           <td>
-            <span>{{beleg.betrag}}€</span>
+            <span>{{ Number(beleg.betrag).toFixed(2) }}€</span>
           </td>
           <td>
             <div class="buttons has-addons are-small">
@@ -83,7 +83,7 @@ export default {
       async load() {
           let r = await api.GET("/reisen/"+ encodeURIComponent(this.$route.params.id));
             if (r.ok && r.content) this.reise = r.content;
-            if (r.status == 401) this.$router.push("/login?login=true")
+            if (r.status == 401) this.$router.push("/")
         },
       edit() {
         alert("Bearbeiten ist aktuell noch nicht implementiert.")
@@ -91,7 +91,7 @@ export default {
     },
     computed:{
         summe(){
-            return this.reise.belege ? this.reise.belege.reduce((pv, cv) => pv + parseFloat(cv.betrag), 0) + "€" : 0 + "€";
+            return Number(this.reise.belege ? this.reise.belege.reduce((pv, cv) => pv + parseFloat(cv.betrag), 0) : 0).toFixed(2) + "€";
         }
     },
 }
