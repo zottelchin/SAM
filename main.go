@@ -1,14 +1,13 @@
 package main
 
 import (
+	"codeberg.org/momar/logg"
 	"github.com/gin-gonic/gin"
 	parcelServe "github.com/moqmar/parcel-serve"
-	r "gopkg.in/rethinkdb/rethinkdb-go.v5"
 )
 
-var session *r.Session
-
 func main() {
+	logg.Info("SAM startet jetzt... \n Builddate: %s \n Commit: %s\n Version: %s", buildDate, gitHash, version)
 	loadConfig()
 
 	router := gin.Default()
@@ -30,6 +29,14 @@ func main() {
 	router.PUT("/api/reisen/:id/beleg", neuerBeleg)
 	router.PUT("/api/reisen/:id/beleg/:bid", belegBearbeiten)
 	router.DELETE("/api/reisen/:id/beleg/:bid", belegLöschen)
+
+	router.GET("/api/version", func(c *gin.Context) {
+		c.JSON(418, gin.H{
+			"version": version,
+			"build":   buildDate,
+			"commit":  gitHash,
+		})
+	})
 
 	parcelServe.Serve("frontend", router, AssetNames(), MustAsset)
 	router.Run(":2222")

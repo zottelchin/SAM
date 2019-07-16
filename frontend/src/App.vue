@@ -17,12 +17,12 @@
           <i>&copy;</i> <a href="http://zottelchin.de">Phillipp</a>
         </div>
         <div>
-          <i class="remixicon-github-line"></i>
+          <i class="remixicon-git-repository-line"></i>
           <a href="https://github.com/zottelchin/sam">SAM</a>
         </div>
         <div>
-          <i class="remixicon-error-warning-line"></i>
-          <a href="https://github.com/zottelchin/sam/issues">SAM</a>
+          <i class="remixicon-git-commit-line"></i>
+          <a :href="github">Build vom: {{version.build}}</a>
         </div>
       </div>
     </footer>
@@ -54,14 +54,25 @@ export default {
   data() {
      this.load();
     return {
-      reise: {}
+      reise: {},
+      version: {
+        commit: "",
+        version: "", 
+        build: ""
+      }
     };
   },
   methods: {
     async load() {
-      console.log("Test")
+      let res = await api.GET("/version");
+      this.version = res.content;
       let r = await api.GET("/config");
       window.key = r.content;
+    }
+  },
+  computed: {
+    github () {
+      return "https://github.com/zottelchin/sam/commit/"+ this.version.commit;
     }
   }
 };
