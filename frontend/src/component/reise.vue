@@ -42,11 +42,11 @@
               <span v-for="p in beleg.an" class="tag is-rounded is-info">{{p.name}}</span>
             </div>
           </td>
-          <td>
-            <span>{{ Number(beleg.betrag).toFixed(2) }}€</span>
+          <td width="1">
+            <span>{{ Number(beleg.betrag / 100).toFixed(2) }}€</span>
           </td>
-          <td>
-            <div class="buttons has-addons are-small">
+          <td width="1">
+            <div class="buttons has-addons are-small is-pulled-right">
               <span class="button is-warning" @click="edit(beleg.id)">
                 <i class="remixicon-pencil-line"></i>
               </span>
@@ -57,44 +57,112 @@
           </td>
         </tr>
         <tr style="cursor: default; background-color: transparent;">
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="summe"><strong>{{summe}}</strong></td>
+            <td colspan="4"><span class="is-pulled-right">Summe:</span></td>
+            <td><strong>{{summe}}</strong></td>
+            <td><span class="button is-primary is-small has-text-weight-bold"  @click="toggle = !toggle"><i :class="{'remixicon-arrow-down-s-line': !toggle, 'remixicon-arrow-up-s-line' : toggle}"></i>Fall lösen</span></td>
         </tr>
       </tbody>
     </table>
+
+    <div v-show="toggle">
+    <h3 class="title is-5 ">Folgende &Uuml;berweisungen begleichen alle Schulden:</h3>
+    <table class="table is-fullwidth">
+      <tr v-for="r in Überweisen" :style="{'text-decoration':r.done ? 'line-through' : ''}">
+        <td>{{reise.mitreisende.find(x => x.mail == r.from).name}}</td>
+        <td style="text-decoration: none !important;"><i class="remixicon-arrow-right-line"></i></td>
+        <td>{{reise.mitreisende.find(x => x.mail == r.to).name}}</td>
+        <td>{{r.amount/100}}€</td>
+        <td>Hier stehen Zahlungsinformationen</td>
+        <td width="1"><span class="button is-success" @click="!r.done && begleichen(r)" :disabled="r.done"><i class="remixicon-check-line"></i></span></td>
+      </tr>
+    </table>
+    <p v-if="Überweisen.length == 0">Alle Schulden sind bereits beglichen.</p>
+    </div>
 </div>
 </template>
 
 <script>
 export default {
     data() {
-      setTimeout(() => this.load());
+      setTimeout(() => this.load(true));
         return {
-            reise: {}
+            reise: {},
+            Überweisen: [],
+            toggle: false,
         }
     },
     methods: {
       async remove(id) {
         if(confirm("Löschen bestätigen")) {
           let r = await api.DELETE("/reisen/"+encodeURIComponent(this.$route.params.id)+"/beleg/"+encodeURIComponent(id));
-          if (r.ok) this.load();
+          if (r.ok) this.load(true);
         }
       },
-      async load() {
+      async load(first) {
           let r = await api.GET("/reisen/"+ encodeURIComponent(this.$route.params.id));
             if (r.ok && r.content) this.reise = r.content;
-            if (r.status == 401) this.$router.push("/")
+            if (r.status == 401) this.$router.push("/");
+            if (first) this.Überweisen = this.getTransactionsFromDeltas(this.calucalteDelta());
         },
       edit() {
         alert("Bearbeiten ist aktuell noch nicht implementiert.")
-      }
+      },
+      calucalteDelta() {
+        //Wer hat wie viel Geld ausgegeben
+        let PersonHaben = {};
+        for (let j in this.reise.belege) {
+          PersonHaben[this.reise.belege[j].von.mail] ? PersonHaben[this.reise.belege[j].von.mail] += this.reise.belege[j].betrag : PersonHaben[this.reise.belege[j].von.mail] = this.reise.belege[j].betrag ;
+        }
+
+        // Wie viel wurde für jeden ausgegeben
+        let PersonSoll = {};
+        for (let j in this.reise.belege) {
+          let betrag = this.reise.belege[j].betrag / this.reise.belege[j].an.length;
+          for (let i in this.reise.belege[j].an) {
+            PersonSoll[this.reise.belege[j].an[i].mail] ? PersonSoll[this.reise.belege[j].an[i].mail] += betrag : PersonSoll[this.reise.belege[j].an[i].mail] = betrag;
+          }
+        }
+
+        //Delta berechnen
+        let delta = [];
+        for (let j in this.reise.mitreisende) {
+          delta.push({ "id": this.reise.mitreisende[j].mail, "delta": (PersonHaben[this.reise.mitreisende[j].mail] ? PersonHaben[this.reise.mitreisende[j].mail] : 0)  - (PersonSoll[this.reise.mitreisende[j].mail] ? PersonSoll[this.reise.mitreisende[j].mail] : 0)});
+        }
+        return delta;
+      },
+      getTransactionsFromDeltas(delta) {
+        const debtors = delta.filter(x => x.delta < 0).sort((a, b) => a.delta - b.delta);
+        const creditors = delta.filter(x => x.delta > 0);
+        const result = [];
+
+        for (let d in debtors) {
+            for (let c in creditors.sort((a, b) => b.delta - a.delta)) {
+                const amount = Math.min(-debtors[d].delta, creditors[c].delta);
+                if (amount <= 0) continue;
+                creditors[c].delta -= amount;
+                debtors[d].delta += amount;
+                result.push({ from: debtors[d].id, to: creditors[c].id, amount: Math.ceil(amount), done: false });
+            }
+        }
+
+        return result.sort((a, b) => a.from > b.from ? 1 : a.from == b.from ? 0 : -1);
+    },
+    async begleichen(Überweisung) {
+      //TODO: Error Handeling
+            let r = await api.PUT("reisen/" + encodeURIComponent(this.$route.params.id) + "/beleg", {
+                "name": "Rückzahlung",
+                "datum": new Date().toISOString().slice(0,10),
+                "betrag": Überweisung.amount,
+                "von": {"mail": Überweisung.from},
+                "an": [{"mail": Überweisung.to}]
+            });
+            await this.load(false);
+            this.Überweisen.filter(x => x == Überweisung)[0].done = true;
+    }
     },
     computed:{
         summe(){
-            return Number(this.reise.belege ? this.reise.belege.reduce((pv, cv) => pv + parseFloat(cv.betrag), 0) : 0).toFixed(2) + "€";
+            return (Number(this.reise.belege ? this.reise.belege.reduce((pv, cv) => pv + parseFloat(cv.betrag), 0) : 0)/100).toFixed(2) + "€";
         }
     },
 }

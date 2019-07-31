@@ -51,7 +51,7 @@ type Beleg struct {
 	ID       int      `json:"id"`
 	Name     string   `json:"name"`
 	Datum    string   `json:"datum"`
-	Betrag   float64  `json:"betrag"`
+	Betrag   int      `json:"betrag"`
 	ReiseID  int      `json:"-"`
 	Von      Nutzer   `json:"von"`
 	An       []Nutzer `json:"an"`
