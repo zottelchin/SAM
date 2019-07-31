@@ -60,7 +60,7 @@ func reiseBearbeiten(c *gin.Context) {
 	}
 
 	id, _ := strconv.Atoi(c.Param("id"))
-	änderungen := Reise{}
+	änderungen := Reise{ID: id}
 	c.BindJSON(&änderungen)
 	reise, err := updateReise(änderungen)
 	if err != nil {
@@ -99,18 +99,24 @@ func reisePersonHinzufügen(c *gin.Context) {
 	}
 	id, _ := strconv.Atoi(c.Param("id"))
 	u := Nutzer{}
-	c.BindJSON(&u)
-	u, err := getNutzer(u)
+	err := c.BindJSON(&u)
+	if err != nil {
+		logg.Error("Fehler beim Binden des Nutzers %s, um eine Person zu einer Reise hinzu zu fügen: %s", u.Mail, err)
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+	u, err = getNutzer(u)
 	if err != nil {
 		logg.Error("Fehler beim Abrufen des NUtzers %d, um eine Person zu einer Reise hinzu zu fügen: %s", id, err)
-		c.Status(500)
+		c.String(500, err.Error())
 		c.Abort()
 		return
 	}
 	r, err := getReise(id)
 	if err != nil {
 		logg.Error("Fehler beim Abrufen der Reise %d, um eine Person hinzu zu fügen: %s", id, err)
-		c.Status(500)
+		c.String(500, err.Error())
 		c.Abort()
 		return
 	}
@@ -121,7 +127,7 @@ func reisePersonHinzufügen(c *gin.Context) {
 		return
 	}
 	logg.Error("Nutzer konnte nicht zu Reise hinzugefügt werden: %s", err)
-	c.Status(500)
+	c.String(500, err.Error())
 	c.Abort()
 }
 
@@ -132,19 +138,24 @@ func reisePersonEntfernen(c *gin.Context) {
 		return
 	}
 	id, _ := strconv.Atoi(c.Param("id"))
-	u := Nutzer{}
-	c.BindJSON(&u)
-	r, err := getReise(id)
-	if err != nil {
-		logg.Error("Fehler beim abrufen der Reise %d um einen Nutzer zu entfernen: %s", id, err)
-		c.Status(500)
+	u := Nutzer{Mail: c.Param("mail")}
+	if u.Mail == "" {
+		logg.Error("Nutzer nicht Spezifiziert")
+		c.String(400, "Nutzer nicht spezifiziert")
 		c.Abort()
 		return
 	}
-	removeNutzerReise(u, r)
+	r, err := getReise(id)
+	if err != nil {
+		logg.Error("Fehler beim abrufen der Reise %d um einen Nutzer zu entfernen: %s", id, err)
+		c.String(400, "%s", err)
+		c.Abort()
+		return
+	}
+	err = removeNutzerReise(u, r)
 	if err != nil {
 		logg.Error("Fehler beim entfernen einer Peson aus der Reise %d: %s", id, err)
-		c.Status(500)
+		c.String(500, "%s", err)
 		c.Abort()
 		return
 	}

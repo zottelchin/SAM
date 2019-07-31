@@ -21,10 +21,10 @@ func main() {
 	router.GET("/api/reisen", meineReisen) //alle reisen
 	router.PUT("/api/reisen", neueReise)   // Reise Anlegen
 	router.GET("/api/reisen/:id", reiseNummer)
-	router.PUT("/api/reisen/:id", reiseBearbeiten)
+	router.POST("/api/reisen/:id", reiseBearbeiten)
 
-	router.PUT("/api/reisen/:id/mitreisende", reisePersonHinzufügen)
-	router.DELETE("/api/reisen/:id/mitreisende", reisePersonEntfernen)
+	router.POST("/api/reisen/:id/mitreisende", reisePersonHinzufügen)
+	router.DELETE("/api/reisen/:id/mitreisende/:mail", reisePersonEntfernen)
 
 	router.PUT("/api/reisen/:id/beleg", neuerBeleg)
 	router.PUT("/api/reisen/:id/beleg/:bid", belegBearbeiten)

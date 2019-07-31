@@ -11,7 +11,10 @@
         <h1 class="title">{{reise.name}}</h1>
       </div>
       <div class="level-right">
-        <div class="field">
+        <div class="field is-grouped">
+          <p class="control">
+            <router-link class="button" :to="$route.path + '/einstellungen'"><span class="icon"><i class="remixicon-settings-4-line"></i></span><span>Einstellungen</span></router-link>
+          </p>
           <p class="control">
             <router-link class="button" :to="$route.path + '/neu'"><span class="icon"><i class="remixicon-add-line"></i></span><span>Neue Ausgabe</span></router-link>
           </p>

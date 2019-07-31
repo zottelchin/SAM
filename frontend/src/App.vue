@@ -35,8 +35,9 @@ import VueRouter from "vue-router";
 import Home from "./component/home.vue";
 import Übersicht from "./component/reisen.vue";
 import Reise from "./component/reise.vue";
-import Neu from "./component/beleg.vue"
-import Info from "./component/Info.vue"
+import Neu from "./component/beleg.vue";
+import Info from "./component/Info.vue";
+import ReiseEinstellungen from "./component/reise-einstellungen.vue";
 
 Vue.use(VueRouter);
 
@@ -47,7 +48,8 @@ const router = new VueRouter({
     { path: "/reisen", component: Übersicht },
     { path: "/reisen/:id", component: Reise },
     { path: "/reisen/:id/neu", component: Neu},
-    { path: "/infos", component: Info}
+    { path: "/infos", component: Info},
+    { path: "/reisen/:id/einstellungen", component: ReiseEinstellungen }
   ]
 });
 

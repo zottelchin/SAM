@@ -224,11 +224,23 @@ func istDabei(n Nutzer, r Reise) bool {
 
 // updateReise ändert die gesetzten Parameter
 func updateReise(r Reise) (Reise, error) {
-	_, err := db.Exec("Update Reisen Set name = ? Where id = ?", r.Name, r.ID)
-	if err != nil {
-		return r, err
+	if r.Name != "" {
+		_, err := db.Exec("Update Reisen Set name = ? Where id = ?", r.Name, r.ID)
+		if err != nil {
+			r, _ = getReise(r.ID)
+			return r, err
+		}
 	}
-	return r, err
+
+	if r.Archiviert {
+		_, err := archivReise(r)
+		if err != nil {
+			r, _ = getReise(r.ID)
+			return r, err
+		}
+	}
+	r, _ = getReise(r.ID)
+	return r, nil
 }
 
 // archivReise setzt das Archivierungs Bit auf Wahr, sodass die Reise als abgeschlossen angezeigt wird
@@ -250,7 +262,11 @@ func addNutzerReise(n Nutzer, r Reise) error {
 // removeNutzerReise entfernt einen Nutzer aus der Reihe der Mitreisenden
 func removeNutzerReise(n Nutzer, r Reise) error {
 	n, _ = getNutzer(n)
-	_, err := db.Exec("Delete From Nutzer_Reisen Where nutzer_id = ? and reise_id = ?", n.ID, r.ID)
+	res, err := db.Exec("Delete From Nutzer_Reisen Where nutzer_id = ? and reise_id = ?", n.ID, r.ID)
+	rows, _ := res.RowsAffected()
+	if err == nil && int(rows) != 1 {
+		err = errors.New("Nutzer nicht beteiligt")
+	}
 	return err
 }
 

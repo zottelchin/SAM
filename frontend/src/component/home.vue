@@ -143,16 +143,21 @@ export default {
     },
     methods: {
         async register() {
+            let valid = true;
+            if (this.agb == false) {valid = false; this.fehlerRechts += "- Sie müssen der Speicherung der Daten zustimmen\n";}
+            if (!(/.{3}/.test(this.name))) {valid = false; this.fehlerRechts += "- Ihr Name muss mindestens 3 Zeichen lang sein\n";}
             this.fehlerRechts = "";
-            let r = await api.POST("/register", {
+            if (valid) {
+                let r = await api.POST("/register", {
                 "mail": this.mail,
                 "name": this.name,
                 "password": this.pw,
                 "key": this.key
-            })
-            if (r.status == 500) this.fehlerRechts = "Die EMail ist schon in der Datenbank";
-            else if (!r.ok) this.fehlerRechts = r.status;
-            if (r.ok) await this.login();
+                })
+                if (r.status == 500) this.fehlerRechts = "Die EMail ist schon in der Datenbank";
+                else if (!r.ok) this.fehlerRechts = r.status;
+                if (r.ok) await this.login();
+            }
         },
         async login() {
             this.fehlerLinks = "";
