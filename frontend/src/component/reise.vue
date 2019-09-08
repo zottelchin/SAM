@@ -25,6 +25,7 @@
       <thead>
         <th>Datum</th>
         <th>Betreff</th>
+        <th>Tags</th>
         <th>Bezahlt von</th>
         <th>Bezahlt für</th>
         <th>Betrag</th>
@@ -33,7 +34,12 @@
       <tbody>
         <tr v-for="beleg in reise.belege" :key="beleg.id">
           <td>{{beleg.datum}}</td>
-          <td>{{beleg.name}}</td>
+          <td>{{beleg.name.replace(/#([^\s]+)/g, "")}}</td>
+          <td>
+            <div class="tags">
+              <span class="tag is-rounded is-warning" v-for="tag in beleg.name.match(/#([^\s]+)/g)">{{tag.substring(1)}}</span>
+            </div>
+          </td>
           <td>
             <span class="tag is-primary is-rounded">{{beleg.von.name}}</span>
           </td>
@@ -46,7 +52,7 @@
             <span>{{ Number(beleg.betrag / 100).toFixed(2) }}€</span>
           </td>
           <td width="1">
-            <div class="buttons has-addons are-small is-pulled-right">
+            <div class="buttons has-addons are-small is-pulled-right" style="flex-wrap: nowrap;">
               <span class="button is-warning" @click="edit(beleg.id)">
                 <i class="remixicon-pencil-line"></i>
               </span>
