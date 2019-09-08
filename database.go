@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 
 	"codeberg.org/momar/logg"
 	_ "github.com/mattn/go-sqlite3"
@@ -65,16 +66,33 @@ func getNutzer(n Nutzer) (Nutzer, error) {
 	if n.ID == 0 && n.Mail == "" {
 		return Nutzer{}, errors.New("Nutzer nicht spezifiziert")
 	}
+	var (
+		reise    sql.NullInt64
+		password sql.NullString
+	)
 	if n.ID != 0 {
-		err := db.QueryRow("Select name, mail, password FROM Nutzer WHERE id = ?", n.ID).Scan(&n.Name, &n.Mail, &n.Password)
+		err := db.QueryRow("Select name, mail, password, reise FROM Nutzer WHERE id = ?", n.ID).Scan(&n.Name, &n.Mail, &password, &reise)
 		if err != nil {
+			logg.Error(err.Error())
 			return Nutzer{}, err
+		}
+		if password.Valid {
+			n.Password = password.String
+		}
+		if reise.Valid {
+			n.FürReise = int(reise.Int64)
 		}
 		return n, nil
 	}
-	err := db.QueryRow("SELECT name, id, password FROM Nutzer WHERE mail = ?", n.Mail).Scan(&n.Name, &n.ID, &n.Password)
+	err := db.QueryRow("SELECT name, id, password, reise FROM Nutzer WHERE mail = ?", n.Mail).Scan(&n.Name, &n.ID, &password, &reise)
 	if err != nil {
 		return Nutzer{}, err
+	}
+	if password.Valid {
+		n.Password = password.String
+	}
+	if reise.Valid {
+		n.FürReise = int(reise.Int64)
 	}
 	return n, nil
 }
@@ -96,9 +114,10 @@ func createNutzer(n Nutzer) (Nutzer, error) {
 // createAnzeigeNutzer erstellt einen Nutzer für eine Reise id, sodass sich nicht alle sich einen Account erstellen müssen,
 // Er wird auch gleich zu der Reise hinzu gefügt.
 func createAnzeigeNutzer(n Nutzer) (Nutzer, error) {
-	if n.Mail == "" || n.Name == "" || n.FürReise == 0 {
-		return Nutzer{}, errors.New("Nutzer nicht genau spezifiziert")
+	if n.Name == "" || n.FürReise == 0 {
+		return Nutzer{}, errors.New("Nutzer nicht genau spezifiziert " + n.Name + " - " + strconv.Itoa(n.FürReise))
 	}
+	n.Mail = generateDummyMail()
 	res, err := db.Exec("Insert into Nutzer (name, mail, reise) Values (?, ?, ?)", n.Name, n.Mail, n.FürReise)
 	if err != nil {
 		return Nutzer{}, err
@@ -303,4 +322,16 @@ func archivBeleg(b Beleg) (Beleg, error) {
 	}
 	b.Gelöscht = true
 	return b, err
+}
+
+func generateDummyMail() string {
+	var mail string
+	for {
+		mail = randomString(11) + "@sam"
+		_, err := getNutzer(Nutzer{Mail: mail})
+		if err == sql.ErrNoRows {
+			break
+		}
+	}
+	return mail
 }

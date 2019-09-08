@@ -24,6 +24,7 @@ func main() {
 	router.POST("/api/reisen/:id", reiseBearbeiten)
 
 	router.POST("/api/reisen/:id/mitreisende", reisePersonHinzufügen)
+	router.PUT("/api/reisen/:id/mitreisende", reiseAnzeigeNutzerhinzufügen)
 	router.DELETE("/api/reisen/:id/mitreisende/:mail", reisePersonEntfernen)
 
 	router.PUT("/api/reisen/:id/beleg", neuerBeleg)

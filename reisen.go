@@ -163,3 +163,41 @@ func reisePersonEntfernen(c *gin.Context) {
 	c.JSON(200, r)
 
 }
+
+func reiseAnzeigeNutzerhinzufügen(c *gin.Context) {
+	if !isLoggedIn(c) {
+		c.Status(401)
+		c.Abort()
+		return
+	}
+	logg.Info("Nutzer hat Rechte")
+	id, _ := strconv.Atoi(c.Param("id"))
+	r, err := getReise(id)
+	if err != nil {
+		logg.Error("Fehler beim Abrufen der Reise %d, um eine Person hinzu zu fügen: %s", id, err)
+		c.String(500, err.Error())
+		c.Abort()
+		return
+	}
+	logg.Info("Reise %d konnte abgerufen werden", id)
+	user := Nutzer{}
+	c.BindJSON(&user)
+	user.FürReise, _ = strconv.Atoi(c.Param("id"))
+	user, err = createAnzeigeNutzer(user)
+	if err != nil {
+		logg.Error("Fehler beim erstellen eines Dummy Nutzers: %s", err)
+		c.String(500, "%s", err)
+		c.Abort()
+		return
+	}
+	logg.Info("Nutzer wurde erstellt: %v+", user)
+	err = addNutzerReise(user, r)
+	if err != nil {
+		logg.Error("Fehler beim erstellen eines Dummy Nutzers: %s", err)
+		c.String(500, "%s", err)
+		c.Abort()
+		return
+	}
+	r, _ = getReise(user.FürReise)
+	c.JSON(200, r)
+}

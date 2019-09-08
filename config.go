@@ -27,5 +27,6 @@ var Config = struct {
 		Port     int
 		Login    string
 		Password string
+		Sender   string
 	}
 }{}

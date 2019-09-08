@@ -37,6 +37,7 @@ import Übersicht from "./component/reisen.vue";
 import Reise from "./component/reise.vue";
 import Neu from "./component/beleg.vue";
 import Info from "./component/Info.vue";
+import 'remixicon/fonts/remixicon.css'
 import ReiseEinstellungen from "./component/reise-einstellungen.vue";
 
 Vue.use(VueRouter);

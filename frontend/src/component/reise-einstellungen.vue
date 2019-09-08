@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <label class="label">Nutzer hinzufügen</label>
+        <label class="label">Nutzer hinzufügen <small style="opacity: 0.5;">(bestehenden Benutzer über seine E-Mail hinzufügen)</small></label>
         <div class="field has-addons">
         <div class="control is-expanded">
             <input class="input" type="email" v-model="mail" placeholder="mail@example.com">
@@ -49,6 +49,16 @@
         <div class="control">
             <span class="button" @click="add()">Hinzufügen</span>
         </div>
+        </div>
+
+        <label  class="label">Anzeigenutzer hinzufügen <small style="opacity: 0.5;">(ist nur in diesem Projekt verwendbar)</small></label>
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <input type="text" class="input" v-model="dummyName" placeholder="Peter">
+            </div>
+            <div class="control">
+                <span class="button" @click="addDisplayUser">Hinzufügen</span>
+            </div>
         </div>
 
         <div class="field">
@@ -68,6 +78,7 @@ export default {
             reise: {},
             mail: "",
             error: "",
+            dummyName: "",
         }
     },
     methods: {
@@ -98,6 +109,12 @@ export default {
             this.error = "";
             let r = await api.POST("/reisen/" + encodeURIComponent(this.$route.params.id), {"name": this.reise.name});
             if (!r.ok) this.error = "Name ändern: " + r.status + " - " + r.content;
+            if (r.ok) this.reise = r.content;
+        },
+        async addDisplayUser() {
+            this.error = "";
+            let r = await api.PUT("/reisen/" + encodeURIComponent(this.$route.params.id) + "/mitreisende/", {"name": this.dummyName})
+            if (!r.ok) this.error = "Nutzer hinzufügen: " + r.status + " - " + r.content;
             if (r.ok) this.reise = r.content;
         }
     }
