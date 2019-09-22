@@ -14,9 +14,11 @@ func neuerBeleg(c *gin.Context) {
 		return
 	}
 	beleg := Beleg{}
-	c.BindJSON(&beleg)
+	err := c.BindJSON(&beleg)
+	logg.Error("%s", err)
 	id, _ := strconv.Atoi(c.Param("id"))
 	r, err := createBeleg(beleg, Reise{ID: id})
+	logg.Info("%v", r)
 	if err != nil {
 		logg.Error("Fehler beim erstellen des neuen Belegs: %s", err)
 		c.Status(500)

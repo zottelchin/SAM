@@ -111,7 +111,7 @@ export default {
             let r = await api.PUT("reisen/" + encodeURIComponent(this.$route.params.id) + "/beleg", {
                 "name": this.name,
                 "datum": this.time,
-                "betrag": this.value * 100,
+                "betrag": Math.trunc(this.value * 100),
                 "von": {"mail": this.by},
                 "an": this.für.map(x => {return {"mail": x};})
             });
