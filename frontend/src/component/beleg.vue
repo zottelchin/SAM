@@ -15,7 +15,7 @@
       <div class="field-body">
         <div class="field">
           <p class="control">
-            <input class="input" type="text" placeholder="Betreff" v-model="b.name">
+            <input class="input" type="text" placeholder="Betreff" v-model="name">
           </p>
         </div>
       </div>
@@ -29,7 +29,7 @@
             <div class="field">
                 <p class="control is-expanded">
                     <div class="select is-fullwidth">
-                    <select v-model="b.by">
+                    <select v-model="by">
                         <option v-for="reisender in mitreisende" :key="reisender.mail" :value="reisender.mail">{{reisender.name}}</option>
                     </select>
                     </div>
@@ -46,7 +46,7 @@
             <div class="field">
                 <div class="control" v-for="reisender in mitreisende" :key="reisender.mail">
                     <label class="checkbox">
-                        <input type="checkbox" :value="reisender.mail" v-model="b.for">
+                        <input type="checkbox" :value="reisender.mail" v-model="für">
                         {{reisender.name}}
                     </label>
                 </div>
@@ -61,7 +61,7 @@
       <div class="field-body">
         <div class="field">
           <p class="control">
-            <input class="input" type="number" placeholder="Betrag" v-model.number="b.v">
+            <input class="input" type="number" placeholder="Betrag" v-model.number="value">
           </p>
         </div>
       </div>
@@ -74,7 +74,7 @@
     <div class="field-body">
         <div class="field">
           <p class="control">
-            <input class="input" type="date" v-model="b.time">
+            <input class="input" type="date" v-model="time">
           </p>
         </div>
       </div>
@@ -92,9 +92,13 @@ export default {
     data(){
         setTimeout(() => this.load());
         return { 
-            b: {
-                for:[],
-            }, mitreisende: {} }
+          value: 0,
+          für: [],
+          time: "",
+          by: "",
+          name: "",
+          mitreisende: {} 
+          }
         },
     methods: {
         async load() {
@@ -105,11 +109,11 @@ export default {
         async save() {
             //TODO: Error Handeling
             let r = await api.PUT("reisen/" + encodeURIComponent(this.$route.params.id) + "/beleg", {
-                "name": this.b.name,
-                "datum": this.b.time,
-                "betrag": this.b.v * 100,
-                "von": {"mail": this.b.by},
-                "an": this.b.for.map(x => {return {"mail": x};})
+                "name": this.name,
+                "datum": this.time,
+                "betrag": this.value * 100,
+                "von": {"mail": this.by},
+                "an": this.für.map(x => {return {"mail": x};})
             });
             console.log(r);
             if (r.ok) this.$router.push("/reisen/" + encodeURIComponent(this.$route.params.id));
