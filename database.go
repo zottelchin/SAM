@@ -311,6 +311,31 @@ func createBeleg(b Beleg, r Reise) (Beleg, error) {
 
 // ändert einen bestehenden Beleg
 func updateBeleg(b Beleg) (Beleg, error) {
+	old := Beleg{}
+	err := db.QueryRow("Select name, datum, betrag, von from Belege Where id = ? and archiviert = false", b.ID).Scan(&old.Name, &old.Datum, &old.Betrag, &old.Von.ID)
+	if err != nil {
+		logg.Error(err.Error())
+		return Beleg{}, err
+	}
+	if old.Name != b.Name && b.Name != "" {
+		_, err := db.Exec("Update Belege Set name = ? Where id = ?", b.Name, b.ID)
+		if err != nil {
+			return b, err
+		}
+	}
+	if old.Betrag != b.Betrag && b.Betrag != 0 {
+		_, err := db.Exec("Update Belege Set betrag = ? Where id = ?", b.Betrag, b.ID)
+		if err != nil {
+			return b, err
+		}
+	}
+	if old.Datum != b.Datum && b.Datum != "" {
+		_, err := db.Exec("Update Belege Set datum = ? Where id = ?", b.Datum, b.ID)
+		if err != nil {
+			return b, err
+		}
+	}
+	//TODO: Von und An änderbar machen
 	return Beleg{}, nil
 }
 

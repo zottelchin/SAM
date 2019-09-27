@@ -39,6 +39,7 @@ import Neu from "./component/beleg.vue";
 import Info from "./component/Info.vue";
 import 'remixicon/fonts/remixicon.css'
 import ReiseEinstellungen from "./component/reise-einstellungen.vue";
+import Bearbeiten from "./component/bearbeiten.vue";
 
 Vue.use(VueRouter);
 
@@ -49,6 +50,7 @@ const router = new VueRouter({
     { path: "/reisen", component: Übersicht },
     { path: "/reisen/:id", component: Reise },
     { path: "/reisen/:id/neu", component: Neu},
+    { path: "/reisen/:id/edit/:payment", component: Bearbeiten },
     { path: "/infos", component: Info},
     { path: "/reisen/:id/einstellungen", component: ReiseEinstellungen }
   ]

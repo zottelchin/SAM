@@ -25,7 +25,7 @@
       <thead>
         <th>Datum</th>
         <th>Betreff</th>
-        <th>Tags</th>
+        <!-- <th>Tags</th> -->
         <th>Bezahlt von</th>
         <th>Bezahlt für</th>
         <th>Betrag</th>
@@ -34,12 +34,12 @@
       <tbody>
         <tr v-for="beleg in reise.belege" :key="beleg.id">
           <td>{{beleg.datum}}</td>
-          <td>{{beleg.name.replace(/#([^\s]+)/g, "")}}</td>
-          <td>
+          <td>{{beleg.name /*.replace(/#([^\s]+)/g, "")*/}}</td>
+         <!--  <td>
             <div class="tags">
               <span class="tag is-rounded is-warning" v-for="tag in beleg.name.match(/#([^\s]+)/g)">{{tag.substring(1)}}</span>
             </div>
-          </td>
+          </td> -->
           <td>
             <span class="tag is-primary is-rounded">{{beleg.von.name}}</span>
           </td>
@@ -110,8 +110,8 @@ export default {
             if (r.status == 401) this.$router.push("/");
             if (first) this.Überweisen = this.getTransactionsFromDeltas(this.calucalteDelta());
         },
-      edit() {
-        alert("Bearbeiten ist aktuell noch nicht implementiert.")
+      edit(id) {
+        this.$router.push("/reisen/" + encodeURIComponent(this.$route.params.id) + "/edit/" + encodeURIComponent(id));
       },
       calucalteDelta() {
         //Wer hat wie viel Geld ausgegeben
