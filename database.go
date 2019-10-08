@@ -335,7 +335,20 @@ func updateBeleg(b Beleg) (Beleg, error) {
 			return b, err
 		}
 	}
-	//TODO: Von und An änderbar machen
+
+	von, _ := getNutzer(Nutzer{Mail: b.Von.Mail})
+	if old.Von.ID != von.ID && von.ID != 0 {
+		_, err := db.Exec("Update Belege Set von = ? Where id = ?", von.ID, b.ID)
+		if err != nil {
+			return b, err
+		}
+	}
+
+	db.Exec("DELETE FROM bezahlt_fuer WHERE beleg_id = ?", b.ID)
+	for _, n := range b.An {
+		n, _ = getNutzer(n)
+		db.Exec("Insert Into bezahlt_fuer (beleg_id, nutzer_id) Values (?, ?)", b.ID, n.ID)
+	}
 	return Beleg{}, nil
 }
 
