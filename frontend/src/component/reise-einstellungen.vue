@@ -61,6 +61,16 @@
             </div>
         </div>
 
+        <label class="label">Reise teilen:</label>
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <input type="text" class="input" v-model="shareName">
+            </div>
+            <div class="control">
+                <span class="button" @click="addShare">Hinzufügen</span>
+            </div>
+        </div>
+
         <div class="field">
             <label class="label">Projektaktionen</label>
             <div class="buttons">
@@ -79,6 +89,7 @@ export default {
             mail: "",
             error: "",
             dummyName: "",
+            shareName: "",
         }
     },
     methods: {
@@ -113,9 +124,14 @@ export default {
         },
         async addDisplayUser() {
             this.error = "";
-            let r = await api.PUT("/reisen/" + encodeURIComponent(this.$route.params.id) + "/mitreisende/", {"name": this.dummyName})
+            let r = await api.PUT("/reisen/" + encodeURIComponent(this.$route.params.id) + "/mitreisende/", {"name": this.dummyName});
             if (!r.ok) this.error = "Nutzer hinzufügen: " + r.status + " - " + r.content;
             if (r.ok) this.reise = r.content;
+        },
+        async addShare() {
+            this.error = "";
+            let r = await api.PUT("/reisen/" + encodeURIComponent(this.$route.params.id) + "/share", {"key": this.shareName});
+            if (!r.ok) this.error = "Nutzer hinzufügen: " + r.status + " - " + r.content;
         }
     }
 }

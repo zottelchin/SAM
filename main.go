@@ -31,6 +31,9 @@ func main() {
 	router.PUT("/api/reisen/:id/beleg/:bid", belegBearbeiten)
 	router.DELETE("/api/reisen/:id/beleg/:bid", belegLöschen)
 
+	router.GET("/api/share/:key/*pass", geteilteReise)
+	router.PUT("/api/reisen/:id/share", reiseTeilen)
+
 	router.GET("/api/version", func(c *gin.Context) {
 		c.JSON(418, gin.H{
 			"version": version,

@@ -373,3 +373,26 @@ func generateDummyMail() string {
 	}
 	return mail
 }
+
+func getShare(key string) (bool, string, bool, int) {
+	var (
+		passwort sql.NullString
+		reiseID  int
+	)
+	err := db.QueryRow("Select passwort, reise_id from Freigaben WHERE schluessel = ?", key).Scan(&passwort, &reiseID)
+	if err == sql.ErrNoRows {
+		return false, "", false, 0
+	}
+	if err != nil {
+		logg.Error(err.Error())
+	}
+	logg.Info("%v, %d", passwort, reiseID)
+	return true, passwort.String, passwort.Valid, reiseID
+}
+
+func erstelleFreigabe(id int, key string) {
+	_, err := db.Exec("Insert Into Freigaben (reise_id, schluessel) Values (?, ?)", id, key)
+	if err != nil {
+		logg.Error(err.Error())
+	}
+}
