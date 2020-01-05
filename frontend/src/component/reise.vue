@@ -144,7 +144,7 @@ export default {
         for (let d in debtors) {
             for (let c in creditors.sort((a, b) => b.delta - a.delta)) {
                 const amount = Math.min(-debtors[d].delta, creditors[c].delta);
-                if (amount <= 0) continue;
+                if (amount <= 0.05) continue;
                 creditors[c].delta -= amount;
                 debtors[d].delta += amount;
                 result.push({ from: debtors[d].id, to: creditors[c].id, amount: Math.ceil(amount), done: false });
